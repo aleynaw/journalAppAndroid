@@ -1,5 +1,6 @@
 package com.example.journalappmcl
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,16 +14,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.journalappmcl.ui.JournalScreen
+import com.example.journalappmcl.ui.LoginScreen
 import com.example.journalappmcl.ui.theme.JournalAppMCLTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        println("HEY")
+        // Redirect to login if user isn't authenticated
+        if (!isLoggedIn()) {
+            println("NOT LOGGED IN")
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Load Compose UI
         setContent {
-            MaterialTheme {
-                JournalScreen()  // automatically uses viewModel()
+            JournalAppMCLTheme {
+                MaterialTheme {
+                    JournalScreen() // Main app screen
+                }
             }
         }
+    }
+
+    private fun isLoggedIn(): Boolean {
+        val prefs = getSharedPreferences("auth", MODE_PRIVATE)
+        return prefs.getBoolean("isLoggedIn", false)
     }
 }
 
