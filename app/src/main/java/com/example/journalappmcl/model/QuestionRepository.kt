@@ -112,8 +112,9 @@ object QuestionRepository {
                     "Mood",
                     "Hunger",
                     "Social Context",
-                    "Other"
-                )
+                    "Other",
+                ),
+                NextIndex = 16
             )
         ),
         Question(
@@ -123,7 +124,8 @@ object QuestionRepository {
                     "See the food",
                     "Smell the food",
                     "Think about the food"
-                )
+                ),
+                NextIndex = 29
             )
         ),
         Question(
@@ -203,7 +205,8 @@ object QuestionRepository {
                     "Hunger",
                     "Social Context",
                     "Other"
-                )
+                ),
+                NextIndex = 28
             )
         ),
         Question(
@@ -213,7 +216,8 @@ object QuestionRepository {
                     "See the food",
                     "Smell the food",
                     "Think about the food"
-                )
+                ),
+                NextIndex = 29
             )
         ),
         Question(

@@ -3,7 +3,6 @@ package com.example.journalappmcl.model
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
@@ -40,7 +39,8 @@ sealed class QuestionType {
     object TimeSelect         : QuestionType()
     @Serializable
     data class MultiQ(
-        val options: List<String>
+        val options: List<String>,
+        val NextIndex: Int
     ) : QuestionType()
     @Serializable
     data class MultiText(
