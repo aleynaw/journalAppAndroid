@@ -60,7 +60,7 @@ object QuestionRepository {
         Question(
             text = "What makes your craving feel intense?",
             type = QuestionType.Text(
-                NextIndex = 9
+                NextIndex = 10
             )
         ),
         Question(

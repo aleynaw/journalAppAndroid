@@ -152,7 +152,7 @@ class JournalViewModel : ViewModel() {
                 if (sliderValue >= (s.range.start + s.range.endInclusive) / 2) s.intenseNextIndex ?: idx + 1
                 else                                                             s.mildNextIndex   ?: idx + 1
             }
-            is QuestionType.MultiQ -> questions.value.indexOfFirst { it.type is QuestionType.EndLoop }
+            //is QuestionType.MultiQ -> questions.value.indexOfFirst { it.type is QuestionType.EndLoop }
             is QuestionType.Text -> (q.type as QuestionType.Text).NextIndex!!
             else -> idx + 1
         }
