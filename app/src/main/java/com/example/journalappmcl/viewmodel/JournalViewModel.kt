@@ -1,15 +1,20 @@
 package com.example.journalappmcl.viewmodel
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.journalappmcl.GlobusUploader
 import com.example.journalappmcl.model.Question
 import com.example.journalappmcl.model.QuestionRepository
 import com.example.journalappmcl.model.QuestionResponse
 import com.example.journalappmcl.model.QuestionType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class JournalViewModel : ViewModel() {
     // ─── Backing Flows for questions, info messages, current index, and responses ───
@@ -25,7 +30,7 @@ class JournalViewModel : ViewModel() {
     private val _responses = MutableStateFlow<List<QuestionResponse>>(emptyList())
     val responses: StateFlow<List<QuestionResponse>> = _responses
 
-    // ─── UI State for the “answer” controls ───────────────────────────────────────────
+    // ─── UI State for the "answer" controls ───────────────────────────────────────────
     var textAnswer by mutableStateOf("")
     var yesNoAnswer by mutableStateOf<Boolean?>(null)
     var optionAnswer by mutableStateOf<String?>(null)
@@ -36,7 +41,7 @@ class JournalViewModel : ViewModel() {
     var conditionalYesNo by mutableStateOf<Boolean?>(null)
     var conditionalText by mutableStateOf("")
 
-    // ─── Called by the “Next” button ───────────────────────────────────────────────────
+    // ─── Called by the "Next" button ───────────────────────────────────────────────────
     fun onNext() {
         saveCurrentResponse()
         advanceIndex()
@@ -65,7 +70,7 @@ class JournalViewModel : ViewModel() {
         }
     }
 
-    // ─── Persist the user’s answer into the responses list ────────────────────────────
+    // ─── Persist the user's answer into the responses list ────────────────────────────
     private fun saveCurrentResponse() {
         val idx = _currentIndex.value
         val q = questions.value[idx]
@@ -128,5 +133,39 @@ class JournalViewModel : ViewModel() {
         multiTextAnswers   = emptyList()
         conditionalYesNo   = null
         conditionalText    = ""
+    }
+
+    fun uploadResponsesToGlobus(context: Context) {
+        try {
+            val jsonString = Json { prettyPrint = true }.encodeToString(_responses.value)
+            Log.d("JournalViewModel", "Serialized responses: $jsonString")
+            
+            // Get the access token from SharedPreferences
+            val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+            val accessToken = prefs.getString("access_token", null)
+            Log.d("JournalViewModel", "Retrieved access token: ${accessToken?.take(10)}...")
+            
+            if (accessToken != null) {
+                // Generate filename with timestamp
+                val timestamp = java.time.Instant.now().toString()
+                    .replace(":", "-")  // Replace colons with dashes for filesystem compatibility
+                    .replace(".", "-")  // Replace dots with dashes
+                val filename = "responses_$timestamp.json"
+                
+                val uploader = GlobusUploader()
+                uploader.uploadResponses(
+                    responsesJson = jsonString,
+                    baseUrl = "https://g-123456.abc123.globus.org",
+                    collectionPath = "/~/MobileUploads",
+                    accessToken = accessToken,
+                    filename = filename
+                )
+                Log.d("JournalViewModel", "Uploading to file: $filename")
+            } else {
+                Log.e("JournalViewModel", "No access token found in auth_prefs")
+            }
+        } catch (e: Exception) {
+            Log.e("JournalViewModel", "Failed to upload responses", e)
+        }
     }
 }

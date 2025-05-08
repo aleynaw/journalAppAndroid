@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization") version "1.9.0"
 }
 
 android {
@@ -48,6 +49,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
+    // Kotlin Serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
     // Jetpack Compose BOM (manages all Compose versions for you)
     implementation(platform(libs.androidx.compose.bom))
 
@@ -58,7 +62,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    // Material “extended” icons (this brings in Icons.Default.XXX)
+    // Material "extended" icons (this brings in Icons.Default.XXX)
     implementation("androidx.compose.material:material-icons-extended")
 
     // ← ViewModel + Compose integration

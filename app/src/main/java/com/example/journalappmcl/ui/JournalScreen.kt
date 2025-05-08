@@ -1,5 +1,7 @@
 package com.example.journalappmcl.ui
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -24,11 +27,15 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.journalappmcl.model.Question
 import com.example.journalappmcl.model.QuestionType
 import com.example.journalappmcl.viewmodel.JournalViewModel
+import com.example.journalappmcl.GlobusUploader
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 //import kotlinx.coroutines.flow.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JournalScreen(vm: JournalViewModel = viewModel()) {
+    val context = LocalContext.current
     // Observe state from the ViewModel
     val questions by vm.questions.collectAsState()
     val infoMsgs  by vm.infoMessages.collectAsState()
@@ -230,7 +237,7 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                     modifier = Modifier.fillMaxWidth()
                 )
                 LaunchedEffect(Unit) {
-                    // TODO serialize vm.responses & upload via your network layer
+                    vm.uploadResponsesToGlobus(context)
                 }
             }
         }
