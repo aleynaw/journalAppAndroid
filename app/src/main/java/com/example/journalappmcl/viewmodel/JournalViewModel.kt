@@ -29,7 +29,7 @@ class JournalViewModel : ViewModel() {
     private val json = Json {
         prettyPrint = true
         serializersModule = SerializersModule {
-            contextual(InstantSerializer)
+            contextual<Instant>(InstantSerializer)
         }
     }
 
