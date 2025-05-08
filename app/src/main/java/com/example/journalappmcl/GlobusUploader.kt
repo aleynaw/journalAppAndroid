@@ -1,7 +1,10 @@
 package com.example.journalappmcl
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.example.journalappmcl.model.QuestionResponse
+import com.example.journalappmcl.viewmodel.InstantSerializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -24,6 +27,7 @@ class GlobusUploader {
         private val MEDIA_TYPE_JSON = "application/json; charset=utf-8"
             .toMediaType()
 
+        @RequiresApi(Build.VERSION_CODES.O)
         private val json = Json {
             prettyPrint = true
             serializersModule = SerializersModule {
