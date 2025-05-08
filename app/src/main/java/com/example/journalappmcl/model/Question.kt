@@ -1,13 +1,20 @@
 package com.example.journalappmcl.model
 
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 @Serializable
 sealed class QuestionType {
     @Serializable
     object Statement           : QuestionType()
     @Serializable
-    object Text                : QuestionType()
+    data class Text(
+        val NextIndex: Int?
+    )               : QuestionType()
     @Serializable
     data class YesNo(
         val yesNextIndex: Int?,
@@ -19,6 +26,7 @@ sealed class QuestionType {
     ) : QuestionType()
     @Serializable
     data class Slider(
+        @Serializable(with = FloatRangeSerializer::class)
         val range: ClosedFloatingPointRange<Float>,
         val step: Float,
         val intenseNextIndex: Int?,
@@ -51,3 +59,16 @@ data class Question(
     val text: String,
     val type: QuestionType
 )
+
+class FloatRangeSerializer : KSerializer<ClosedFloatingPointRange<Float>> {
+    override val descriptor = PrimitiveSerialDescriptor("FloatRange", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: ClosedFloatingPointRange<Float>) {
+        encoder.encodeString("${value.start},${value.endInclusive}")
+    }
+
+    override fun deserialize(decoder: Decoder): ClosedFloatingPointRange<Float> {
+        val parts = decoder.decodeString().split(",")
+        return parts[0].toFloat()..parts[1].toFloat()
+    }
+}
