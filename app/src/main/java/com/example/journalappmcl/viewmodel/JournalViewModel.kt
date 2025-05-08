@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.journalappmcl.GlobusUploader
+import com.example.journalappmcl.UserPreferences
 import com.example.journalappmcl.model.Question
 import com.example.journalappmcl.model.QuestionRepository
 import com.example.journalappmcl.model.QuestionResponse
@@ -161,22 +162,23 @@ class JournalViewModel : ViewModel() {
             val accessToken = prefs.getString("access_token", null)
             Log.d("JournalViewModel", "Retrieved access token: ${accessToken?.take(10)}...")
             
+            // Get the user ID
+            val userPreferences = UserPreferences(context)
+            val userId = userPreferences.userId
+            if (userId == null) {
+                Log.e("JournalViewModel", "No user ID found")
+                return
+            }
+            
             if (accessToken != null) {
-                // Generate filename with timestamp
-                val timestamp = Instant.now().toString()
-                    .replace(":", "-")  // Replace colons with dashes for filesystem compatibility
-                    .replace(".", "-")  // Replace dots with dashes
-                val filename = "responses_$timestamp.json"
-                
                 val uploader = GlobusUploader()
                 uploader.uploadResponses(
                     responsesJson = jsonString,
                     baseUrl = "https://g-4e0411.88cee.8443.data.globus.org",
                     collectionPath = "MobileUploads",
                     accessToken = accessToken,
-                    filename = filename
+                    userId = userId
                 )
-                Log.d("JournalViewModel", "Uploading to file: $filename")
             } else {
                 Log.e("JournalViewModel", "No access token found in auth_prefs")
             }

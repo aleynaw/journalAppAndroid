@@ -5,8 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import com.example.journalappmcl.ui.JournalScreen
-import com.example.journalappmcl.ui.theme.JournalAppMCLTheme
+import com.example.journalappmcl.ui.UserIdScreen
+import com.example.journalappmcl.viewmodel.JournalViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -24,10 +27,19 @@ class MainActivity : ComponentActivity() {
 
         // ✅ Launch main screen
         setContent {
-            JournalAppMCLTheme {
-                MaterialTheme {
-                    JournalScreen()
-                }
+            val context = LocalContext.current
+            val userPreferences = remember { UserPreferences(context) }
+            val viewModel = remember { JournalViewModel() }
+            
+            var userIdSet by remember { mutableStateOf(userPreferences.userId != null) }
+
+            if (!userIdSet) {
+                UserIdScreen(
+                    userPreferences = userPreferences,
+                    onUserIdSet = { userIdSet = true }
+                )
+            } else {
+                JournalScreen(vm = viewModel)
             }
         }
     }
