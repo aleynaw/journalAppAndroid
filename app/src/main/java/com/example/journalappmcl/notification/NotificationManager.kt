@@ -7,27 +7,29 @@ import java.util.concurrent.TimeUnit
 class NotificationManager(private val context: Context) {
 
     companion object {
-        private const val MORNING_WORK = "morning_notification"
+        private const val AFTERNOON_WORK = "afternoon_notification"
         private const val EVENING_WORK = "evening_notification"
+        private const val NIGHT_WORK = "night_notification"
     }
 
     fun scheduleNotifications() {
-        scheduleMorningNotification()
+        scheduleAfternoonNotification()
         scheduleEveningNotification()
+        scheduleNightNotification()
     }
 
-    private fun scheduleMorningNotification() {
-        val morningWorkRequest = PeriodicWorkRequestBuilder<JournalNotificationWorker>(
+    private fun scheduleAfternoonNotification() {
+        val afternoonWorkRequest = PeriodicWorkRequestBuilder<JournalNotificationWorker>(
             24, TimeUnit.HOURS
         )
-            .setInitialDelay(calculateInitialDelay(9, 0), TimeUnit.MILLISECONDS)
-            .addTag(MORNING_WORK)
+            .setInitialDelay(calculateInitialDelay(14, 0), TimeUnit.MILLISECONDS)
+            .addTag(AFTERNOON_WORK)
             .build()
 
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            MORNING_WORK,
+            AFTERNOON_WORK,
             ExistingPeriodicWorkPolicy.KEEP,
-            morningWorkRequest
+            afternoonWorkRequest
         )
     }
 
@@ -35,7 +37,7 @@ class NotificationManager(private val context: Context) {
         val eveningWorkRequest = PeriodicWorkRequestBuilder<JournalNotificationWorker>(
             24, TimeUnit.HOURS
         )
-            .setInitialDelay(calculateInitialDelay(18, 0), TimeUnit.MILLISECONDS)
+            .setInitialDelay(calculateInitialDelay(17, 0), TimeUnit.MILLISECONDS)
             .addTag(EVENING_WORK)
             .build()
 
@@ -43,6 +45,21 @@ class NotificationManager(private val context: Context) {
             EVENING_WORK,
             ExistingPeriodicWorkPolicy.KEEP,
             eveningWorkRequest
+        )
+    }
+
+    private fun scheduleNightNotification() {
+        val nightWorkRequest = PeriodicWorkRequestBuilder<JournalNotificationWorker>(
+            24, TimeUnit.HOURS
+        )
+            .setInitialDelay(calculateInitialDelay(20, 0), TimeUnit.MILLISECONDS)
+            .addTag(NIGHT_WORK)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            NIGHT_WORK,
+            ExistingPeriodicWorkPolicy.KEEP,
+            nightWorkRequest
         )
     }
 
