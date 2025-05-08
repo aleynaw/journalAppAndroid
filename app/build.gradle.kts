@@ -52,6 +52,9 @@ dependencies {
     // Kotlin Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
+    // WorkManager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
     // Jetpack Compose BOM (manages all Compose versions for you)
     implementation(platform(libs.androidx.compose.bom))
 

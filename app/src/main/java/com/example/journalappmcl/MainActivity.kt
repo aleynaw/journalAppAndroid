@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.journalappmcl.notification.NotificationManager
 import com.example.journalappmcl.ui.JournalScreen
 import com.example.journalappmcl.ui.UserIdScreen
 import com.example.journalappmcl.viewmodel.JournalViewModel
@@ -21,6 +22,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = JournalViewModel()
+
+        // Initialize notifications
+        NotificationManager(this).scheduleNotifications()
 
         // Check login first
         if (!isLoggedIn()) {
