@@ -12,9 +12,11 @@ import com.example.journalappmcl.ui.UserIdScreen
 import com.example.journalappmcl.viewmodel.JournalViewModel
 
 class MainActivity : ComponentActivity() {
+    private lateinit var viewModel: JournalViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = JournalViewModel()
 
         // 🔐 Check login
         if (!isLoggedIn()) {
@@ -29,7 +31,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
             val userPreferences = remember { UserPreferences(context) }
-            val viewModel = remember { JournalViewModel() }
             
             var userIdSet by remember { mutableStateOf(userPreferences.userId != null) }
 
@@ -41,6 +42,14 @@ class MainActivity : ComponentActivity() {
             } else {
                 JournalScreen(vm = viewModel)
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Only reset if the app was completed and uploaded
+        if (viewModel.isCompleted.value) {
+            viewModel.resetState()
         }
     }
 

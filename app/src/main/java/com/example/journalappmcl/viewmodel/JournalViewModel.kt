@@ -47,6 +47,9 @@ class JournalViewModel : ViewModel() {
     private val _responses = MutableStateFlow<List<QuestionResponse>>(emptyList())
     val responses: StateFlow<List<QuestionResponse>> = _responses
 
+    private var _isCompleted = MutableStateFlow(false)
+    val isCompleted: StateFlow<Boolean> = _isCompleted
+
     // ─── UI State for the "answer" controls ───────────────────────────────────────────
     var textAnswer by mutableStateOf("")
     var yesNoAnswer by mutableStateOf<Boolean?>(null)
@@ -57,6 +60,21 @@ class JournalViewModel : ViewModel() {
     var multiTextAnswers by mutableStateOf(listOf<String>())
     var conditionalYesNo by mutableStateOf<Boolean?>(null)
     var conditionalText by mutableStateOf("")
+
+    init {
+        _isCompleted.value = false
+    }
+
+    fun resetState() {
+        if (_isCompleted.value) {
+            _questions.value = QuestionRepository.getInitialQuestions()
+            _infoMessages.value = QuestionRepository.getInitialInfoMessages()
+            _currentIndex.value = 0
+            _responses.value = emptyList()
+            resetAnswerState()
+            _isCompleted.value = false
+        }
+    }
 
     // ─── Called by the "Next" button ───────────────────────────────────────────────────
     fun onNext() {
@@ -132,7 +150,7 @@ class JournalViewModel : ViewModel() {
             }
             is QuestionType.MultiQ -> questions.value.indexOfFirst { it.type is QuestionType.EndLoop }
             is QuestionType.EndLoop -> {
-                // (optional) reset here or handle in the Composable
+                _isCompleted.value = true
                 idx
             }
             else -> idx + 1
@@ -179,6 +197,7 @@ class JournalViewModel : ViewModel() {
                     accessToken = accessToken,
                     userId = userId
                 )
+                resetState()
             } else {
                 Log.e("JournalViewModel", "No access token found in auth_prefs")
             }
