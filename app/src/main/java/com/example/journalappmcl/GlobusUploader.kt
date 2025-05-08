@@ -5,6 +5,9 @@ import com.example.journalappmcl.model.QuestionResponse
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
+import java.time.Instant
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -20,6 +23,13 @@ class GlobusUploader {
         // JSON media type with charset
         private val MEDIA_TYPE_JSON = "application/json; charset=utf-8"
             .toMediaType()
+
+        private val json = Json {
+            prettyPrint = true
+            serializersModule = SerializersModule {
+                contextual(Instant::class, InstantSerializer)
+            }
+        }
     }
 
     fun uploadResponses(
@@ -31,7 +41,7 @@ class GlobusUploader {
     ) {
         // 1) Parse responses
         val responses: List<QuestionResponse> = try {
-            Json.decodeFromString(responsesJson)
+            json.decodeFromString(responsesJson)
         } catch (e: Exception) {
             Log.e(TAG, "❌ Failed to parse responses JSON: ${e.localizedMessage}")
             return
@@ -39,7 +49,7 @@ class GlobusUploader {
 
         // 2) Serialize back to JSON
         val jsonString = try {
-            Json { prettyPrint = true }.encodeToString(responses)
+            json.encodeToString(responses)
         } catch (e: Exception) {
             Log.e(TAG, "❌ JSON serialization failed: ${e.localizedMessage}")
             return
