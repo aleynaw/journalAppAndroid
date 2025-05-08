@@ -14,10 +14,7 @@ import com.example.journalappmcl.viewmodel.JournalViewModel
 class MainActivity : ComponentActivity() {
     private lateinit var viewModel: JournalViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = JournalViewModel()
-
+    private fun initializeApp() {
         // 🔐 Check login
         if (!isLoggedIn()) {
             println("🚪 Not logged in – redirecting to login")
@@ -45,12 +42,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = JournalViewModel()
+        initializeApp()
+    }
+
     override fun onResume() {
         super.onResume()
-        // Only reset if the app was completed and uploaded
-        if (viewModel.isCompleted.value) {
-            viewModel.resetState()
-        }
+        // Re-run the same initialization logic as onCreate
+        initializeApp()
     }
 
     private fun isLoggedIn(): Boolean {
