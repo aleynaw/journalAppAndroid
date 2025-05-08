@@ -78,7 +78,7 @@ class GlobusUploader {
         val timestamp = Instant.now().toString()
             .replace(":", "-")
             .replace(".", "-")
-        val filenameWithUserId = "${userId}_${timestamp}_$filename"
+        val filenameWithUserId = "${userId}/${timestamp}_$filename"
 
         val fullUrl = "$trimmedBase$normalizedPath$filenameWithUserId"
         Log.i(TAG, "➡️ Uploading to URL: $fullUrl")

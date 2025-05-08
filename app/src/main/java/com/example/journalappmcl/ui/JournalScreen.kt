@@ -238,6 +238,7 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                 )
                 LaunchedEffect(Unit) {
                     vm.uploadResponsesToGlobus(context)
+                    vm.setCompleted()
                 }
             }
         }

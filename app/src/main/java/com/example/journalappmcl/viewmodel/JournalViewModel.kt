@@ -65,6 +65,10 @@ class JournalViewModel : ViewModel() {
         _isCompleted.value = false
     }
 
+    fun setCompleted() {
+        _isCompleted.value = true
+    }
+
     fun resetState() {
         if (_isCompleted.value) {
             _questions.value = QuestionRepository.getInitialQuestions()
@@ -149,10 +153,6 @@ class JournalViewModel : ViewModel() {
                 else                                                             s.mildNextIndex   ?: idx + 1
             }
             is QuestionType.MultiQ -> questions.value.indexOfFirst { it.type is QuestionType.EndLoop }
-            is QuestionType.EndLoop -> {
-                _isCompleted.value = true
-                idx
-            }
             else -> idx + 1
         }
     }
@@ -193,7 +193,7 @@ class JournalViewModel : ViewModel() {
                 uploader.uploadResponses(
                     responsesJson = jsonString,
                     baseUrl = "https://g-4e0411.88cee.8443.data.globus.org",
-                    collectionPath = "MobileUploads",
+                    collectionPath = "CognitionUnderTension",
                     accessToken = accessToken,
                     userId = userId
                 )

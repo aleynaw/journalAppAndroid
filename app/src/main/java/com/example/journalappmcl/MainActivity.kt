@@ -49,9 +49,15 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onResume() {
+        println("YOOO")
+        println(viewModel.isCompleted.value)
         super.onResume()
         // Re-run the same initialization logic as onCreate
-        initializeApp()
+
+        if (viewModel.isCompleted.value) {
+            viewModel = JournalViewModel()
+            initializeApp()
+        }
     }
 
     private fun isLoggedIn(): Boolean {
