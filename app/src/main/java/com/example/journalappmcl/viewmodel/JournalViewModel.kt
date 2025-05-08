@@ -171,8 +171,8 @@ class JournalViewModel : ViewModel() {
                 val uploader = GlobusUploader()
                 uploader.uploadResponses(
                     responsesJson = jsonString,
-                    baseUrl = "https://g-123456.abc123.globus.org",
-                    collectionPath = "/~/MobileUploads",
+                    baseUrl = "https://g-4e0411.88cee.8443.data.globus.org",
+                    collectionPath = "MobileUploads",
                     accessToken = accessToken,
                     filename = filename
                 )
