@@ -1,12 +1,16 @@
 package com.example.journalappmcl
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -14,6 +18,7 @@ import com.example.journalappmcl.notification.NotificationManager
 import com.example.journalappmcl.ui.JournalScreen
 import com.example.journalappmcl.ui.UserIdScreen
 import com.example.journalappmcl.viewmodel.JournalViewModel
+import android.Manifest
 
 
 class MainActivity : ComponentActivity() {
@@ -23,6 +28,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         viewModel = JournalViewModel()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+            }
+        }
         // Initialize notifications
         NotificationManager(this).scheduleNotifications()
 
