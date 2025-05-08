@@ -15,8 +15,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
+import java.time.Instant
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 class JournalViewModel : ViewModel() {
+    private val json = Json {
+        prettyPrint = true
+        serializersModule = SerializersModule {
+            contextual(InstantSerializer)
+        }
+    }
+
     // ─── Backing Flows for questions, info messages, current index, and responses ───
     private val _questions = MutableStateFlow(QuestionRepository.getInitialQuestions())
     val questions: StateFlow<List<Question>> = _questions
@@ -137,7 +153,7 @@ class JournalViewModel : ViewModel() {
 
     fun uploadResponsesToGlobus(context: Context) {
         try {
-            val jsonString = Json { prettyPrint = true }.encodeToString(_responses.value)
+            val jsonString = json.encodeToString(_responses.value)
             Log.d("JournalViewModel", "Serialized responses: $jsonString")
             
             // Get the access token from SharedPreferences
@@ -147,7 +163,7 @@ class JournalViewModel : ViewModel() {
             
             if (accessToken != null) {
                 // Generate filename with timestamp
-                val timestamp = java.time.Instant.now().toString()
+                val timestamp = Instant.now().toString()
                     .replace(":", "-")  // Replace colons with dashes for filesystem compatibility
                     .replace(".", "-")  // Replace dots with dashes
                 val filename = "responses_$timestamp.json"
@@ -167,5 +183,17 @@ class JournalViewModel : ViewModel() {
         } catch (e: Exception) {
             Log.e("JournalViewModel", "Failed to upload responses", e)
         }
+    }
+}
+
+object InstantSerializer : KSerializer<Instant> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Instant", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Instant) {
+        encoder.encodeString(value.toString())
+    }
+
+    override fun deserialize(decoder: Decoder): Instant {
+        return Instant.parse(decoder.decodeString())
     }
 }
