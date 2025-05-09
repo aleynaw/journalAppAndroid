@@ -22,9 +22,18 @@ android {
             "appAuthRedirectScheme" to "com.example.journalappmcl"
         )
     }
+    signingConfigs {
+        create("release") {
+            storeFile = file("keystore/my-release-key.jks")
+            storePassword = "123456"
+            keyAlias = "journalapp-key"
+            keyPassword = "123456"
+        }
+    }
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -32,6 +41,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

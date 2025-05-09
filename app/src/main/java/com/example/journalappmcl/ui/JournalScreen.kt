@@ -77,7 +77,9 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                 when (q.type) {
                     is QuestionType.Statement -> {
                         Text(
-                            "We invite you to approach your experience with curiosity…",
+                            "We invite you to approach your experience with curiosity and\\n\" +\n" +
+                                    "                                    \"without any pressure or judgment. To do this, we will guide you through some questions. There\\n\" +\n" +
+                                    "                                    \"is no right or wrong way to answer.",
                             fontStyle = FontStyle.Italic,
                             style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Center,
@@ -91,7 +93,7 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                         OutlinedTextField(
                             value = vm.textAnswer,
                             onValueChange = { vm.textAnswer = it },
-                            placeholder = { Text("Type your answer here…") },
+                            placeholder = { Text("Please describe your experience here without any judgment.") },
                             modifier = Modifier
                                 .fillMaxWidth(0.8f)
                                 .padding(horizontal = 16.dp)
