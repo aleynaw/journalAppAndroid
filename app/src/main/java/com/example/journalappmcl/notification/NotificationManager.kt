@@ -16,7 +16,7 @@ class NotificationManager(private val context: Context) {
             println("Scheduling 20-min notification") // Optional log for debugging
 
             val workRequest = OneTimeWorkRequestBuilder<JournalNotificationWorker>()
-                .setInitialDelay(1, TimeUnit.SECONDS)
+                .setInitialDelay(20, TimeUnit.MINUTES)
                 .addTag(YES_MIN_WORK) // Add a tag for easier identification if needed
                 .build()
 

@@ -68,6 +68,13 @@ class JournalViewModel : ViewModel() {
     fun setCompleted() {
         _isCompleted.value = true
     }
+    fun loadNewQuestions() {
+        _questions.value = QuestionRepository.getFollowupQuestions()
+        _currentIndex.value = 0
+        _responses.value = emptyList()
+        resetAnswerState()
+        _isCompleted.value = false
+    }
 
     fun resetState() {
         if (_isCompleted.value) {

@@ -95,7 +95,7 @@ class MainActivity : ComponentActivity() {
                         "new_questions" -> {
                             // Trigger the feature to load new questions using your ViewModel
                             println("LOADED FROM NOTIFICATION: Triggering new questions.")
-                            //viewModel.loadNextQuestionBatch() // Call your ViewModel function
+                            viewModel.loadNewQuestions() // Call your ViewModel function
                             // Consider removing the extra after handling to avoid re-triggering
                             currentIntent.removeExtra("notification_type")
                             currentIntent.removeExtra("notification_id")

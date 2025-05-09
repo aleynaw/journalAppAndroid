@@ -4,6 +4,93 @@ import com.example.journalappmcl.R
 import com.example.journalappmcl.notification.NotificationManager
 
 object QuestionRepository {
+    fun getFollowupQuestions(): List<Question> = listOf(
+        Question(
+            text = "Hi again! Let's take a moment and explore what is happening for you right now. We invite you to approach your experience with curiosity and without any pressure or judgment. By judgment, we mean, for example, whether craving is good or bad. The goal is to explore more deeply how you experience your craving. To do this, we will guide you through some different questions. There is no right or wrong way to answer.",
+            type = QuestionType.Statement
+        ),
+        Question(
+            text = "Are you still craving?",
+            type = QuestionType.YesNo(yesNextIndex = 2, noNextIndex = 10, yesFunc = NotificationManager::schedule20minNotification)
+        ),
+        Question(
+            text = "Please tell us about your current situation.",
+            type = QuestionType.MultiText(
+                subQuestions = listOf(
+                    "Where are you?",
+                    "What are you doing?",
+                    "Are you alone or with others?"
+                )
+            )
+        ),
+        Question(
+            text = "How intense is your craving?",
+            type = QuestionType.Slider(
+                range = 0f..10f,
+                step = 1f,
+                intenseNextIndex = 4,
+                mildNextIndex = 5
+            )
+        ),
+        Question(
+            text = "What makes your craving feel intense?",
+            type = QuestionType.Text(
+                NextIndex = 6
+            )
+        ),
+        Question(
+            text = "What makes your craving feel mild?",
+            type = QuestionType.Text(
+                NextIndex = 6
+            )
+        ),
+        Question(
+            text = "Does it feel like things are happening for you with a greater speed? Or does it feel like things are slowing down and the moment never passes? Or do you not notice any change at all?",
+            type = QuestionType.Option(
+                options = listOf(
+                    "Speeding up",
+                    "Slowing down",
+                    "No change"
+                )
+            )
+        ),
+        Question(
+            text = "Which image below best represents your attentional state?",
+            type = QuestionType.ImageOptions(
+                drawableIds = listOf(
+                    R.drawable.busy_mind,
+                    R.drawable.calm_mind,
+                    R.drawable.tunnel_vision
+                )
+            )
+        ),
+        Question(
+            text = "Please describe any emotions that are standing out to you.",
+            type = QuestionType.Text(
+                NextIndex = 9
+            )
+        ),
+        Question(
+            text = "Are you trying to control the craving?",
+            type = QuestionType.ConditionalText(
+                followUpPrompt = "What are you doing to control it?"
+            )
+        ),
+        Question(
+            text = "Please tell us about your current situation.",
+            type = QuestionType.MultiText(
+                subQuestions = listOf(
+                    "How did the craving stop?",
+                    "What are you doing?",
+                    "Are you alone or with others?"
+                )
+            )
+        ),
+        Question(
+            text = "Thank you for your time! We will check in later.",
+            type = QuestionType.EndLoop
+        )
+    )
     fun getInitialQuestions(): List<Question> = listOf(
         Question(
             text = "Hi there! Let's take a moment and explore what is happening for you right now.",
