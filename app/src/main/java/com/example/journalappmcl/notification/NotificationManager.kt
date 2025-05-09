@@ -10,11 +10,22 @@ class NotificationManager(private val context: Context) {
         private const val AFTERNOON_WORK = "afternoon_notification"
         private const val EVENING_WORK = "evening_notification"
         private const val NIGHT_WORK = "night_notification"
+        private const val YES_MIN_WORK = "20_min_notification"
 
-        fun schedule20minNotification() {
+        fun schedule20minNotification(context: Context) {
+            println("Scheduling 20-min notification") // Optional log for debugging
+
             val workRequest = OneTimeWorkRequestBuilder<JournalNotificationWorker>()
-                    .setInitialDelay(20, TimeUnit.MINUTES)
-                    .build()
+                .setInitialDelay(1, TimeUnit.SECONDS)
+                .addTag(YES_MIN_WORK) // Add a tag for easier identification if needed
+                .build()
+
+            // Get an instance of WorkManager and enqueue the work request
+            androidx.work.WorkManager.getInstance(context).enqueueUniqueWork(
+                YES_MIN_WORK, // Provide a unique name for this work
+                androidx.work.ExistingWorkPolicy.REPLACE, // Define how to handle existing work with the same unique name
+                workRequest
+            )
         }
     }
 

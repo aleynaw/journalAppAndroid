@@ -1,11 +1,12 @@
 package com.example.journalappmcl.model
 
+import android.content.Context
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlin.reflect.KFunction0
+import kotlin.reflect.KFunction1
 
 @Serializable
 sealed class QuestionType {
@@ -19,7 +20,8 @@ sealed class QuestionType {
     data class YesNo(
         val yesNextIndex: Int?,
         val noNextIndex: Int?,
-        val yesFunc: KFunction0<Unit>? = null
+        @Transient
+        val yesFunc: KFunction1<Context, Unit>? = null
     ) : QuestionType()
     @Serializable
     data class Option(

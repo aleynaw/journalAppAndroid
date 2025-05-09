@@ -106,7 +106,7 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                         ) {
                             Button(
                                 onClick = { vm.yesNoAnswer = true
-                                        q.type.yesFunc?.let { it() }
+                                        q.type.yesFunc?.let { it(context) }
                                           },
                                 shape = MaterialTheme.shapes.large,
                                 colors = ButtonDefaults.buttonColors(

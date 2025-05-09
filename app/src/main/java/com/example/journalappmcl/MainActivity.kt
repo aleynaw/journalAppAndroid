@@ -73,10 +73,42 @@ class MainActivity : ComponentActivity() {
             }
 
             // Handle the reset when needed
-            LaunchedEffect(needsReset.value) {
+            // Handle the reset and notification intent when needed
+            LaunchedEffect(needsReset.value, intent) { // Add 'intent' as a key
+                println("RELOAD or NEW INTENT") // More descriptive log
+
+                // Handle the reset logic
                 if (needsReset.value) {
                     viewModel.resetState()
                     needsReset.value = false
+                }
+
+                // Handle the notification intent logic
+                // Check if the intent contains the identifier for your notification
+                // We use 'currentIntent' to get the latest intent if onNewIntent was called
+                val currentIntent = this@MainActivity.intent // Get the current intent of the activity
+
+                if (currentIntent.hasExtra("notification_type")) {
+                    val notificationType = currentIntent.getStringExtra("notification_type")
+
+                    when (notificationType) {
+                        "new_questions" -> {
+                            // Trigger the feature to load new questions using your ViewModel
+                            println("LOADED FROM NOTIFICATION: Triggering new questions.")
+                            //viewModel.loadNextQuestionBatch() // Call your ViewModel function
+                            // Consider removing the extra after handling to avoid re-triggering
+                            currentIntent.removeExtra("notification_type")
+                            currentIntent.removeExtra("notification_id")
+                        }
+                        // Handle other notification types if you have them
+                        // "reminder" -> { ... }
+                    }
+
+                    // You can also get other extra data if needed
+                    val notificationId = currentIntent.getIntExtra("notification_id", -1)
+                    if (notificationId != -1) {
+                        // Use the notification ID
+                    }
                 }
             }
 
