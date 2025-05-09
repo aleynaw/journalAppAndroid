@@ -10,6 +10,12 @@ class NotificationManager(private val context: Context) {
         private const val AFTERNOON_WORK = "afternoon_notification"
         private const val EVENING_WORK = "evening_notification"
         private const val NIGHT_WORK = "night_notification"
+
+        fun schedule20minNotification() {
+            val workRequest = OneTimeWorkRequestBuilder<JournalNotificationWorker>()
+                    .setInitialDelay(20, TimeUnit.MINUTES)
+                    .build()
+        }
     }
 
     fun scheduleNotifications() {

@@ -5,6 +5,7 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlin.reflect.KFunction0
 
 @Serializable
 sealed class QuestionType {
@@ -17,7 +18,8 @@ sealed class QuestionType {
     @Serializable
     data class YesNo(
         val yesNextIndex: Int?,
-        val noNextIndex: Int?
+        val noNextIndex: Int?,
+        val yesFunc: KFunction0<Unit>? = null
     ) : QuestionType()
     @Serializable
     data class Option(

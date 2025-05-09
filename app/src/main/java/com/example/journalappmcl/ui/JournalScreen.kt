@@ -91,7 +91,7 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                         OutlinedTextField(
                             value = vm.textAnswer,
                             onValueChange = { vm.textAnswer = it },
-                            placeholder = { Text("Please describe your experience here without any judgment.") },
+                            placeholder = { Text("Please describe your experience without any judgment.") },
                             modifier = Modifier
                                 .fillMaxWidth(0.8f)
                                 .padding(horizontal = 16.dp)
@@ -105,7 +105,9 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                             modifier = Modifier.padding(vertical = 8.dp)
                         ) {
                             Button(
-                                onClick = { vm.yesNoAnswer = true },
+                                onClick = { vm.yesNoAnswer = true
+                                        q.type.yesFunc?.let { it() }
+                                          },
                                 shape = MaterialTheme.shapes.large,
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = if (vm.yesNoAnswer == true) MaterialTheme.colorScheme.primary

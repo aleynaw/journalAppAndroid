@@ -1,6 +1,7 @@
 package com.example.journalappmcl.model
 
 import com.example.journalappmcl.R
+import com.example.journalappmcl.notification.NotificationManager
 
 object QuestionRepository {
     fun getInitialQuestions(): List<Question> = listOf(
@@ -34,7 +35,7 @@ object QuestionRepository {
         ),
         Question(
             text = "Are you craving food right now?",
-            type = QuestionType.YesNo(yesNextIndex = 5, noNextIndex = 17)
+            type = QuestionType.YesNo(yesNextIndex = 5, noNextIndex = 17, yesFunc = NotificationManager::schedule20minNotification)
         ),
         Question(
             text = "How do you know that you are craving?",
