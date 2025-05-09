@@ -70,6 +70,7 @@ class JournalViewModel : ViewModel() {
     }
     fun loadNewQuestions() {
         _questions.value = QuestionRepository.getFollowupQuestions()
+        _infoMessages.value = QuestionRepository.getFollowupInfoMessages()
         _currentIndex.value = 0
         _responses.value = emptyList()
         resetAnswerState()

@@ -77,16 +77,6 @@ object QuestionRepository {
             )
         ),
         Question(
-            text = "Please tell us about your current situation.",
-            type = QuestionType.MultiText(
-                subQuestions = listOf(
-                    "How did the craving stop?",
-                    "What are you doing?",
-                    "Are you alone or with others?"
-                )
-            )
-        ),
-        Question(
             text = "Thank you for your time! We will check in later.",
             type = QuestionType.EndLoop
         )
@@ -322,10 +312,46 @@ object QuestionRepository {
         "", // craving now
         "Please describe how you notice that you are craving", // how do you know
         "", // specific foods
-        "", // intensity
+        "Please rate the intensity of your craving from mild to very strong.", // intensity
         "", // intense feeling
         "", // mild feeling
-        "", // time perception
+        "Sometimes the flow of time may feel accelerated or slowed down without an obvious explanation." +
+                "Do you notice any change in your experience of time, or does it feel like nothing has changed at all?", // time perception
+        "", // attention state
+        "", // emotions
+        "", // control craving
+        "", // remember elicitor
+        "", // what elicited
+        "", // did you see/smell/think
+        "", // recent craving
+        "Please describe how you noticed that you wer craving", // how did you know
+        "", // specific foods
+        "Please rate the intensity of your craving from mild to very strong.", // intensity
+        "", // intense feeling
+        "", // mild feeling
+        "Sometimes the flow of time may feel accelerated or slowed without an obvious explanation. Did you notice a" +
+                "change in your experience of time, or did it feel like nothing has changed at all?", // time perception
+        "", // attention state
+        "", // emotions
+        "", // control craving
+        "", // what elicited
+        "", // did you see/smell/think
+        ""  // end loop
+    )
+
+    fun getFollowupInfoMessages(): List<String> = listOf(
+        "", // statement
+        "", // situation
+        "", // hungry
+        "", // last time ate
+        "", // craving now
+        "Please describe how you notice that you are craving", // how do you know
+        "", // specific foods
+        "Please rate the intensity of your craving from mild to very strong.", // intensity
+        "", // intense feeling
+        "", // mild feeling
+        "Sometimes the flow of time may feel accelerated or slowed down without an obvious explanation." +
+                "Do you notice any change in your experience of time, or does it feel like nothing has changed at all?", // time perception
         "", // attention state
         "", // emotions
         "", // control craving

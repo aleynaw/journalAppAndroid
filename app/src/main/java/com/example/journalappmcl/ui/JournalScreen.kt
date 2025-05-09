@@ -45,6 +45,8 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
     val q = questions.getOrNull(idx) ?: return
     val info = infoMsgs.getOrNull(idx) ?: ""
 
+    var showInfoDialog by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -56,15 +58,29 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Question text at the top
-            Text(
-                text = q.text,
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 32.dp, top = 24.dp)
-            )
+                    .padding(bottom = 32.dp, top = 24.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = q.text,
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
+                )
+                if (info.isNotBlank()) {
+                    IconButton(onClick = { showInfoDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "More info"
+                        )
+                    }
+                }
+            }
+
 
             // Center content - takes most of the space
             Box(
@@ -88,14 +104,25 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                     }
 
                     is QuestionType.Text -> {
-                        OutlinedTextField(
-                            value = vm.textAnswer,
-                            onValueChange = { vm.textAnswer = it },
-                            placeholder = { Text("Please describe your experience without any judgment.") },
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth(0.8f)
                                 .padding(horizontal = 16.dp)
-                        )
+                        ) {
+                            Text(
+                                text = "Please describe your experience without any judgment.",
+                                fontStyle = FontStyle.Italic,
+                                // you can also tweak the color or typography if you like:
+                                // style = MaterialTheme.typography.bodySmall
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            OutlinedTextField(
+                                value = vm.textAnswer,
+                                onValueChange = { vm.textAnswer = it },
+                                placeholder = { Text("Type answer here...") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
 
                     is QuestionType.YesNo -> {
@@ -324,14 +351,14 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                     }
 
                     is QuestionType.EndLoop -> {
-                        Text(
-                            text = q.text,
-                            style = MaterialTheme.typography.headlineSmall,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth(0.8f)
-                                .padding(horizontal = 16.dp)
-                        )
+//                        Text(
+//                            text = q.text,
+//                            style = MaterialTheme.typography.headlineSmall,
+//                            textAlign = TextAlign.Center,
+//                            modifier = Modifier
+//                                .fillMaxWidth(0.8f)
+//                                .padding(horizontal = 16.dp)
+//                        )
                         LaunchedEffect(Unit) {
                             vm.uploadResponsesToGlobus(context)
                             vm.setCompleted()
@@ -361,6 +388,20 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                         .padding(bottom = 16.dp)
                 )
             }
+
+            if (showInfoDialog) {
+                AlertDialog(
+                    onDismissRequest = { showInfoDialog = false },
+                    title = { Text("More information") },
+                    text = { Text(info) },
+                    confirmButton = {
+                        TextButton(onClick = { showInfoDialog = false }) {
+                            Text("OK")
+                        }
+                    }
+                )
+            }
+
         }
     }
 }
