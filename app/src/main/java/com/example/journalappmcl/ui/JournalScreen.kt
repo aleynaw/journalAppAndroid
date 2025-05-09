@@ -77,9 +77,7 @@ fun JournalScreen(vm: JournalViewModel = viewModel()) {
                 when (q.type) {
                     is QuestionType.Statement -> {
                         Text(
-                            "We invite you to approach your experience with curiosity and\\n\" +\n" +
-                                    "                                    \"without any pressure or judgment. To do this, we will guide you through some questions. There\\n\" +\n" +
-                                    "                                    \"is no right or wrong way to answer.",
+                            "We invite you to approach your experience with curiosity and without any pressure or judgment. To do this, we will guide you through some questions. There is no right or wrong way to answer.",
                             fontStyle = FontStyle.Italic,
                             style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Center,
