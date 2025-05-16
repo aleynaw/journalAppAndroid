@@ -19,6 +19,9 @@ import com.example.journalappmcl.ui.JournalScreen
 import com.example.journalappmcl.ui.UserIdScreen
 import com.example.journalappmcl.viewmodel.JournalViewModel
 import android.Manifest
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import com.example.journalappmcl.ui.theme.JournalAppMCLTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -48,79 +51,89 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val context = LocalContext.current
-            val userPreferences = remember { UserPreferences(context) }
-            var userIdSet by remember { mutableStateOf(userPreferences.userId != null) }
+            JournalAppMCLTheme {
+                // 1) Paint the theme background
+                androidx.compose.material3.Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color    = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.tertiary
+                ){
+                val context = LocalContext.current
+                val userPreferences = remember { UserPreferences(context) }
+                var userIdSet by remember { mutableStateOf(userPreferences.userId != null) }
 
-            // Track whether we need to reset the UI
-            val needsReset = remember { mutableStateOf(false) }
+                // Track whether we need to reset the UI
+                val needsReset = remember { mutableStateOf(false) }
 
-            // Listen for activity resume events
-            val lifecycleOwner = LocalLifecycleOwner.current
-            DisposableEffect(lifecycleOwner) {
-                val observer = LifecycleEventObserver { _, event ->
-                    if (event == Lifecycle.Event.ON_RESUME) {
-                        // Check if we should reset on resume
-                        if (viewModel.isCompleted.value) {
-                            needsReset.value = true
+                // Listen for activity resume events
+                val lifecycleOwner = LocalLifecycleOwner.current
+                DisposableEffect(lifecycleOwner) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        if (event == Lifecycle.Event.ON_RESUME) {
+                            // Check if we should reset on resume
+                            if (viewModel.isCompleted.value) {
+                                needsReset.value = true
+                            }
+                        }
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose {
+                        lifecycleOwner.lifecycle.removeObserver(observer)
+                    }
+                }
+
+                // Handle the reset when needed
+                // Handle the reset and notification intent when needed
+                LaunchedEffect(needsReset.value, intent) { // Add 'intent' as a key
+                    println("RELOAD or NEW INTENT") // More descriptive log
+
+                    // Handle the reset logic
+                    if (needsReset.value) {
+                        viewModel.resetState()
+                        needsReset.value = false
+                    }
+
+                    // Handle the notification intent logic
+                    // Check if the intent contains the identifier for your notification
+                    // We use 'currentIntent' to get the latest intent if onNewIntent was called
+                    val currentIntent =
+                        this@MainActivity.intent // Get the current intent of the activity
+
+                    if (currentIntent.hasExtra("notification_type")) {
+                        val notificationType = currentIntent.getStringExtra("notification_type")
+
+                        when (notificationType) {
+                            "new_questions" -> {
+                                // Trigger the feature to load new questions using your ViewModel
+                                println("LOADED FROM NOTIFICATION: Triggering new questions.")
+                                viewModel.loadNewQuestions() // Call your ViewModel function
+                                // Consider removing the extra after handling to avoid re-triggering
+                                currentIntent.removeExtra("notification_type")
+                                currentIntent.removeExtra("notification_id")
+                            }
+                            // Handle other notification types if you have them
+                            // "reminder" -> { ... }
+                        }
+
+                        // You can also get other extra data if needed
+                        val notificationId = currentIntent.getIntExtra("notification_id", -1)
+                        if (notificationId != -1) {
+                            // Use the notification ID
                         }
                     }
                 }
-                lifecycleOwner.lifecycle.addObserver(observer)
-                onDispose {
-                    lifecycleOwner.lifecycle.removeObserver(observer)
+
+                if (!userIdSet) {
+                    UserIdScreen(
+                        userPreferences = userPreferences,
+                        onUserIdSet = { userIdSet = true }
+                    )
+                } else {
+                    JournalScreen(vm = viewModel)
                 }
-            }
-
-            // Handle the reset when needed
-            // Handle the reset and notification intent when needed
-            LaunchedEffect(needsReset.value, intent) { // Add 'intent' as a key
-                println("RELOAD or NEW INTENT") // More descriptive log
-
-                // Handle the reset logic
-                if (needsReset.value) {
-                    viewModel.resetState()
-                    needsReset.value = false
-                }
-
-                // Handle the notification intent logic
-                // Check if the intent contains the identifier for your notification
-                // We use 'currentIntent' to get the latest intent if onNewIntent was called
-                val currentIntent = this@MainActivity.intent // Get the current intent of the activity
-
-                if (currentIntent.hasExtra("notification_type")) {
-                    val notificationType = currentIntent.getStringExtra("notification_type")
-
-                    when (notificationType) {
-                        "new_questions" -> {
-                            // Trigger the feature to load new questions using your ViewModel
-                            println("LOADED FROM NOTIFICATION: Triggering new questions.")
-                            viewModel.loadNewQuestions() // Call your ViewModel function
-                            // Consider removing the extra after handling to avoid re-triggering
-                            currentIntent.removeExtra("notification_type")
-                            currentIntent.removeExtra("notification_id")
-                        }
-                        // Handle other notification types if you have them
-                        // "reminder" -> { ... }
-                    }
-
-                    // You can also get other extra data if needed
-                    val notificationId = currentIntent.getIntExtra("notification_id", -1)
-                    if (notificationId != -1) {
-                        // Use the notification ID
-                    }
-                }
-            }
-
-            if (!userIdSet) {
-                UserIdScreen(
-                    userPreferences = userPreferences,
-                    onUserIdSet = { userIdSet = true }
-                )
-            } else {
-                JournalScreen(vm = viewModel)
             }
         }
+            }
     }
 
     override fun onResume() {

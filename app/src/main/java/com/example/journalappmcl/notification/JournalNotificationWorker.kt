@@ -64,7 +64,7 @@ class JournalNotificationWorker(
         // Build the notification
         val builder = NotificationCompat.Builder(context, "question_channel_id")
             .setSmallIcon(R.drawable.ic_launcher_foreground) // Replace with your small icon
-            .setContentTitle("Time for new questions!")
+            .setContentTitle("Time to follow up!")
             .setContentText("Tap to load a new set of questions.")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(tapPendingIntent) // Set the tap action

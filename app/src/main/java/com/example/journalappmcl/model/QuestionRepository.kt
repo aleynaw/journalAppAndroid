@@ -286,17 +286,17 @@ object QuestionRepository {
                 ),
                 NextIndex = 28
             )
-        ),
-        Question(
-            text = "Did you... (select all that apply)",
-            type = QuestionType.MultiQ(
-                options = listOf(
-                    "See the food",
-                    "Smell the food",
-                    "Think about the food"
-                ),
-                NextIndex = 29
-            )
+//        ),
+//        Question(
+//            text = "Did you... (select all that apply)",
+//            type = QuestionType.MultiQ(
+//                options = listOf(
+//                    "See the food",
+//                    "Smell the food",
+//                    "Think about the food"
+//                ),
+//                NextIndex = 29
+//            )
         ),
         Question(
             text = "Thank you for your time! We will check in later.",
