@@ -7,25 +7,39 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
+import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.journalappmcl.MainActivity
 import com.example.journalappmcl.R
 
 class JournalNotificationWorker(
-    private val context: Context,
+    context: Context,
     params: WorkerParameters
-) : CoroutineWorker(context, params) {
+) : Worker(context, params) {
 
     companion object {
         const val CHANNEL_ID = "journal_notification_channel"
         const val NOTIFICATION_ID = 1
     }
 
-    override suspend fun doWork(): Result {
+    override fun doWork(): Result {
+        Log.d("JournalWorker", "💡 Worker triggered at: ${System.currentTimeMillis()}")
         showQuestionNotification(applicationContext)
+        // Re-schedule this notification for the same time tomorrow
+        val tag = tags.firstOrNull { it.endsWith("_notification") } ?: return Result.success()
+
+        val (hour, minute) = when (tag) {
+            "2pm_notification" -> 14 to 0
+            "5pm_notification" -> 17 to 0
+            "8pm_notification" -> 20 to 0
+            else -> return Result.success() // unknown tag, don't reschedule
+        }
+
+        NotificationManager(applicationContext).scheduleFixedTimeNotification(tag, hour, minute)
         return Result.success()
     }
 

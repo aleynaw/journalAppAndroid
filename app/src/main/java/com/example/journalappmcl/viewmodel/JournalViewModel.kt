@@ -126,7 +126,7 @@ class JournalViewModel : ViewModel() {
             is QuestionType.YesNo        -> if (yesNoAnswer == true) "Yes" else "No"
             is QuestionType.Option       -> optionAnswer.orEmpty()
             is QuestionType.Slider       -> sliderValue.toString()
-            is QuestionType.MultiQ       -> multiSelections.joinToString()
+            is QuestionType.MultiQ       -> multiSelections.joinToString() + " | " + textAnswer
             is QuestionType.MultiText    -> multiTextAnswers.joinToString(" | ")
             is QuestionType.ConditionalText ->
                 if (conditionalYesNo == true) "Yes: $conditionalText"

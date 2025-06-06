@@ -52,7 +52,8 @@ sealed class QuestionType {
     ) : QuestionType()
     @Serializable
     data class ConditionalText(
-        val followUpPrompt: String
+        val followUpPrompt: String,
+        val NextIndex: Int?
     ) : QuestionType()
     @Serializable
     object EndLoop            : QuestionType()

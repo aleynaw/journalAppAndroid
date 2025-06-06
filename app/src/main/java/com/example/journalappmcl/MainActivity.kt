@@ -19,8 +19,11 @@ import com.example.journalappmcl.ui.JournalScreen
 import com.example.journalappmcl.ui.UserIdScreen
 import com.example.journalappmcl.viewmodel.JournalViewModel
 import android.Manifest
+import android.app.AlarmManager
+import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import com.example.journalappmcl.notification.DailyNotificationScheduler
 import com.example.journalappmcl.ui.theme.JournalAppMCLTheme
 
 
@@ -38,8 +41,24 @@ class MainActivity : ComponentActivity() {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
             }
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
+                // Prompt the user to allow exact alarms
+                val intent = Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+            }
+        }
         // Initialize notifications
-        NotificationManager(this).scheduleNotifications()
+//        NotificationManager(this).scheduleNotifications()
+        createNotificationChannel(this)
+        DailyNotificationScheduler.scheduleDailyNotification(this, 14, 0, 1, 1001)  // Morning
+        DailyNotificationScheduler.scheduleDailyNotification(this, 17, 0, 2, 1002) // Afternoon
+        DailyNotificationScheduler.scheduleDailyNotification(this, 20, 0, 3, 1003) // Evening
+        DailyNotificationScheduler.scheduleDailyNotification(this, 14, 25, 999, 1999)
+        println("Scheduled All Notifications")
 
         // Check login first
         if (!isLoggedIn()) {
@@ -123,6 +142,8 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+
+
                 if (!userIdSet) {
                     UserIdScreen(
                         userPreferences = userPreferences,
@@ -134,6 +155,21 @@ class MainActivity : ComponentActivity() {
             }
         }
             }
+    }
+
+    private fun createNotificationChannel(context: Context) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val name = "Daily Channel"
+            val descriptionText = "Channel for daily journaling reminders"
+            val importance = android.app.NotificationManager.IMPORTANCE_HIGH
+            val channel = android.app.NotificationChannel("daily_channel", name, importance).apply {
+                description = descriptionText
+            }
+
+            val notificationManager: android.app.NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     override fun onResume() {
