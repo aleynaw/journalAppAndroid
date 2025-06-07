@@ -21,6 +21,8 @@ import com.example.journalappmcl.viewmodel.JournalViewModel
 import android.Manifest
 import android.app.AlarmManager
 import android.content.Context
+import android.media.session.MediaSession.Token
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import com.example.journalappmcl.notification.DailyNotificationScheduler
@@ -60,6 +62,8 @@ class MainActivity : ComponentActivity() {
         DailyNotificationScheduler.scheduleDailyNotification(this, 14, 25, 999, 1999)
         println("Scheduled All Notifications")
 
+
+
         // Check login first
         if (!isLoggedIn()) {
             println("🚪 Not logged in – redirecting to login")
@@ -69,9 +73,20 @@ class MainActivity : ComponentActivity() {
             return
         }
 
+        // Refresh Token If Needed
+        val tokenManager = TokenManager(this)
+        tokenManager.refreshAccessToken { success ->
+            if (success) {
+                Log.i("MainActivity", "Access token refreshed successfully.")
+            } else {
+                Log.e("MainActivity", "Failed to refresh access token.")
+            }
+        }
+
         setContent {
             JournalAppMCLTheme {
                 // 1) Paint the theme background
+
                 androidx.compose.material3.Surface(
                     modifier = Modifier.fillMaxSize(),
                     color    = MaterialTheme.colorScheme.background,
@@ -174,7 +189,14 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // No need to handle reset here, it's done in the Compose UI
+        val tokenManager = TokenManager(this)
+        tokenManager.refreshAccessToken { success ->
+            if (success) {
+                Log.i("MainActivity", "Access token refreshed successfully.")
+            } else {
+                Log.e("MainActivity", "Failed to refresh access token.")
+            }
+        }
     }
 
     private fun isLoggedIn(): Boolean {

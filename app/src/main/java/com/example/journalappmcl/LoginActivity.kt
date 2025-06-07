@@ -191,4 +191,46 @@ class LoginActivity : AppCompatActivity() {
         super.onDestroy()
         authService.dispose()
     }
+
+    fun refreshAccessToken() {
+        Log.i(TAG, "Starting token refresh flow")
+
+        val prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE)
+        val refreshToken = prefs.getString("refresh_token", null)
+
+        if (refreshToken == null) {
+            Log.e(TAG, "No refresh token found. Cannot refresh access token.")
+            return
+        }
+
+        val tokenRequest = TokenRequest.Builder(
+            authServiceConfig,
+            CLIENT_ID
+        )
+            .setGrantType(GrantTypeValues.REFRESH_TOKEN)
+            .setRefreshToken(refreshToken)
+            .build()
+
+        Log.i(TAG, "Performing token refresh request")
+        authService.performTokenRequest(tokenRequest) { tokenResponse, exception ->
+            if (tokenResponse != null) {
+                val newAccessToken = tokenResponse.accessToken
+                val newRefreshToken = tokenResponse.refreshToken ?: refreshToken // Some servers may not return a new one
+
+                Log.i(TAG, "New Access Token: $newAccessToken")
+
+                // Save the new tokens
+                with(prefs.edit()) {
+                    putString("access_token", newAccessToken)
+                    putString("refresh_token", newRefreshToken)
+                    apply()
+                }
+
+                Log.i(TAG, "✅ Tokens refreshed and stored.")
+
+            } else {
+                Log.e(TAG, "Token refresh failed: $exception")
+            }
+        }
+    }
 }
