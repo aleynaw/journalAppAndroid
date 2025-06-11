@@ -162,6 +162,7 @@ class JournalViewModel : ViewModel() {
             }
             is QuestionType.MultiQ -> (q.type as QuestionType.MultiQ).NextIndex
             is QuestionType.Text -> (q.type as QuestionType.Text).NextIndex!!
+            is QuestionType.ConditionalText -> (q.type as QuestionType.ConditionalText).NextIndex!!
             else -> idx + 1
         }
         println("NEXT INDEX:")

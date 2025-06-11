@@ -281,7 +281,7 @@ object QuestionRepository {
         Question( //26
             text = "Were you trying to control the craving?",
             type = QuestionType.ConditionalText(
-                followUpPrompt = "How did you control the craving?",
+                followUpPrompt = "What were you doing to control it?",
                 NextIndex = 27
             )
         ),

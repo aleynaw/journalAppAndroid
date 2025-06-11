@@ -59,7 +59,6 @@ class MainActivity : ComponentActivity() {
         DailyNotificationScheduler.scheduleDailyNotification(this, 14, 0, 1, 1001)  // Morning
         DailyNotificationScheduler.scheduleDailyNotification(this, 17, 0, 2, 1002) // Afternoon
         DailyNotificationScheduler.scheduleDailyNotification(this, 20, 0, 3, 1003) // Evening
-        DailyNotificationScheduler.scheduleDailyNotification(this, 14, 25, 999, 1999)
         println("Scheduled All Notifications")
 
 
